@@ -16,7 +16,7 @@ export default function Footer() {
       </div>
       <p style={{ margin: 0 }}>© 2025 ITConnect — Tous droits réservés</p>
       <p style={{ margin: '6px 0 0', fontSize: 11 }}>
-        Mise en relation de professionnels IT · Melun · Sens · Auxerre
+        Mise en relation de professionnels IT · Melun · Sens · Auxerre - Montereau  - Montpellier - Bordeaux
       </p>
     </footer>
   )
