@@ -7,18 +7,18 @@ import StarRating from '../components/StarRating'
 
 // --- Données fictives (à remplacer par appels API) ---
 const PROS_VEDETTE = [
-  { id: 1, nom: 'Karim Ndiaye',    specialite: 'Expert réseau & cybersécurité', ville: 'Melun',     note: 5,   avis: 24, initiales: 'KN', dispo: true  },
+  { id: 1, nom: 'Karim Ndiaye',    specialite: 'Expert réseau & cybersécurité', ville: 'Melun',      note: 5,   avis: 24, initiales: 'KN', dispo: true  },
   { id: 2, nom: 'Lucie Perrin',    specialite: 'Administratrice systèmes',       ville: 'Montereau', note: 4.8, avis: 31, initiales: 'LP', dispo: true  },
   { id: 3, nom: 'Amélie Chevalier',specialite: 'Développeuse React / Node.js',   ville: 'Sens',      note: 4,   avis: 17, initiales: 'AC', dispo: false },
   { id: 4, nom: 'Nina Vallet',     specialite: 'UX Designer & Intégratrice',     ville: 'Melun',     note: 4.9, avis: 19, initiales: 'NV', dispo: true  },
-  { id: 5, nom: 'Youssef Driss',   specialite: 'Data Scientist & IA',            ville: 'Sens',      note: 4.5, avis: 7,  initiales: 'YD', dispo: true  },
-  { id: 6, nom: 'Romain Bernard',  specialite: 'Développeur mobile React Native',ville: 'Melun',     note: 4.2, avis: 13, initiales: 'RB', dispo: false },
+  { id: 5, nom: 'Youssef Driss',   specialite: 'Data Scientist & IA',            ville: 'Auxerre',   note: 4.5, avis: 7,  initiales: 'YD', dispo: true  },
+  { id: 6, nom: 'Romain Bernard',  specialite: 'Développeur mobile React Native',ville: 'Montpellier', note: 4.2, avis: 13, initiales: 'RB', dispo: false },
 ]
 
 const TEMOIGNAGES = [
-  { id: 1, auteur: 'Claire Girard',    role: 'Particulier',  ville: 'Montereau', note: 5, texte: 'Karim a configuré mon réseau en moins d\'une heure. Service impeccable, je recommande vivement !', initiales: 'CG' },
+  { id: 1, auteur: 'Claire Girard',    role: 'Particulier',  ville: 'Sens', note: 5, texte: 'Karim a configuré mon réseau en moins d\'une heure. Service impeccable, je recommande vivement !', initiales: 'CG' },
   { id: 2, auteur: 'Pierre Garnier',   role: 'DataSolutions SAS', ville: 'Melun', note: 5, texte: 'Lucie gère notre parc de 40 postes avec une efficacité remarquable. Partenaire de confiance depuis 2 ans.', initiales: 'PG' },
-  { id: 3, auteur: 'Manon Bouchard',   role: 'Particulier',  ville: 'Melun',     note: 4, texte: 'Amélie a créé mon site vitrine en 3 semaines. Design moderne et livraison dans les délais.', initiales: 'MB' },
+  { id: 3, auteur: 'Manon Bouchard',   role: 'Particulier',  ville: 'Lunel',     note: 4, texte: 'Amélie a créé mon site vitrine en 3 semaines. Design moderne et livraison dans les délais.', initiales: 'MB' },
 ]
 
 const CATEGORIES = [
