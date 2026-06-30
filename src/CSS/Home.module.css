@@ -38,7 +38,7 @@
 
 .heroInner {
   position: relative;
-  max-width: 1100px;
+  max-width: 1669px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -184,7 +184,7 @@
 }
 
 .sectionInner {
-  max-width: 1100px;
+  max-width: 1669px;
   margin: 0 auto;
   position: relative;
 }
@@ -458,4 +458,100 @@
 .ctaFinalBtn {
   font-size: 15px;
   padding: 14px 36px;
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — TABLETTE (≤ 1024px)
+   ══════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero {
+    padding: 56px 20px 44px;
+  }
+
+  .heroInner {
+    gap: 32px;
+  }
+
+  .catGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .prosGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .temGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — MOBILE (≤ 640px)
+   ══════════════════════════════════════ */
+@media (max-width: 640px) {
+  .hero {
+    padding: 40px 16px 32px;
+  }
+
+  .heroInner {
+    flex-direction: column;
+    text-align: center;
+    gap: 28px;
+  }
+
+  .heroText {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .heroSub {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .searchRow {
+    flex-direction: column;
+  }
+
+  .searchBtn {
+    width: 100%;
+  }
+
+  .heroCtas {
+    justify-content: center;
+  }
+
+  .heroIllus {
+    order: -1;
+  }
+
+  .heroIllus svg {
+    max-width: 240px;
+  }
+
+  .section,
+  .sectionAlt {
+    padding: 48px 16px;
+  }
+
+  .h2Sub {
+    margin-bottom: 32px;
+  }
+
+  .catGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .prosGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .temGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaSection {
+    padding: 56px 16px;
+  }
 }
