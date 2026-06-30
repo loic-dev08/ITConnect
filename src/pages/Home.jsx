@@ -8,11 +8,11 @@ import styles from '../css/Home.module.css'
 
 // --- Données fictives (à remplacer par appels API) ---
 const PROS_VEDETTE = [
-  { id: 1, nom: 'Larry Max',    specialite: 'Expert réseau & cybersécurité', ville: 'Melun',      note: 5,   avis: 24, initiales: 'KN', dispo: true  },
+  { id: 1, nom: 'Larry Max',    specialite: 'Expert réseau & cybersécurité', ville: 'Melun',      note: 5,   avis: 24, initiales: 'LM', dispo: true  },
   { id: 2, nom: 'Lucie Perrin',    specialite: 'Administratrice systèmes',       ville: 'Montereau', note: 4.8, avis: 31, initiales: 'LP', dispo: true  },
   { id: 3, nom: 'Amélie Chevalier',specialite: 'Développeuse React / Node.js',   ville: 'Sens',      note: 4,   avis: 17, initiales: 'AC', dispo: false },
   { id: 4, nom: 'Nina Vallet',     specialite: 'UX Designer & Intégratrice',     ville: 'Melun',     note: 4.9, avis: 19, initiales: 'NV', dispo: true  },
-  { id: 5, nom: 'Éric Castel',   specialite: 'Data Scientist & IA',            ville: 'Auxerre',   note: 4.5, avis: 7,  initiales: 'YD', dispo: true  },
+  { id: 5, nom: 'Éric Castel',   specialite: 'Data Scientist & IA',            ville: 'Auxerre',   note: 4.5, avis: 7,  initiales: 'EC', dispo: true  },
   { id: 6, nom: 'Romain Bernard',  specialite: 'Développeur mobile React Native',ville: 'Montpellier', note: 4.2, avis: 13, initiales: 'RB', dispo: false },
 ]
 
