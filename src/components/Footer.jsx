@@ -1,21 +1,15 @@
 // src/components/Footer.jsx
+import styles from '../css/Footer.module.css'
+
 export default function Footer() {
   return (
-    <footer style={{
-      background: '#080D14',
-      borderTop: '1px solid rgba(255,255,255,0.07)',
-      padding: '32px 24px',
-      textAlign: 'center',
-      color: '#556070',
-      fontSize: '13px',
-      fontFamily: 'system-ui, sans-serif',
-    }}>
-      <div style={{ marginBottom: 8 }}>
-        <span style={{ color: '#fff', fontWeight: 700 }}>IT</span>
-        <span style={{ color: '#7F77DD', fontWeight: 300 }}>Connect</span>
+    <footer className={styles.footer}>
+      <div className={styles.logo}>
+        <span className={styles.logoIt}>IT</span>
+        <span className={styles.logoConnect}>Connect</span>
       </div>
-      <p style={{ margin: 0 }}>© 2025 ITConnect — Tous droits réservés</p>
-      <p style={{ margin: '6px 0 0', fontSize: 11 }}>
+      <p className={styles.copyright}>© 2025 ITConnect — Tous droits réservés</p>
+      <p className={styles.tagline}>
         Mise en relation de professionnels IT · Melun · Sens · Auxerre - Montereau  - Montpellier - Bordeaux
       </p>
     </footer>
