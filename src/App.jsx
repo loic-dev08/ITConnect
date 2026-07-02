@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from'./components/ProtectedRoute';
+import ProDemandes from './pages/ProDemandes';
 
 function App() {
   return(
@@ -20,6 +21,7 @@ function App() {
       <Route path='/connexion'element={<Login />} />
       <Route element={<ProtectedRoute />} />
       <Route path='/dashboard'element={<Dashboard />} />
+      <Route path="/dashboard/demandes" element={<ProDemandes />} />
     </Routes>
     </BrowserRouter>
   )

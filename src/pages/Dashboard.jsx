@@ -4,14 +4,10 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import styles from '../css/Dashboard.module.css'
 
-// ── Données fictives (à remplacer par appels API) ─────────────
-// L'utilisateur réel viendra du localStorage / AuthContext.
-// Ici on simule un fallback si aucun user n'est connecté, pour
-// pouvoir visualiser le rendu sans être authentifié.
 const FAKE_USER = {
   prenom: 'Camille',
   nom: 'Dubois',
-  role: 'professionnel', // 'particulier' | 'entreprise' | 'professionnel' | 'admin'
+  role: 'professionnel',
 }
 
 const ROLE_LABELS = {
@@ -21,7 +17,6 @@ const ROLE_LABELS = {
   admin: 'Administrateur',
 }
 
-// Contenu des stats selon le rôle
 const STATS_BY_ROLE = {
   particulier: [
     { label: 'Demandes envoyées', value: 5, trend: '+2 ce mois', up: true },
@@ -49,7 +44,6 @@ const STATS_BY_ROLE = {
   ],
 }
 
-// Activité récente selon le rôle
 const ACTIVITY_BY_ROLE = {
   particulier: [
     { id: 1, icon: '💻', color: 'blue',   titre: 'Demande envoyée à Larry Max', meta: 'Expert réseau & cybersécurité · il y a 2h',   statut: 'En attente' },
@@ -75,12 +69,12 @@ const ACTIVITY_BY_ROLE = {
 }
 
 const NAV_ITEMS = [
-  { id: 'apercu',  label: 'Aperçu',         icon: '📊' },
-  { id: 'demandes', label: 'Demandes',       icon: '📋' },
-  { id: 'messages', label: 'Messages',       icon: '💬' },
-  { id: 'profil',   label: 'Mon profil',     icon: '👤' },
-  { id: 'avis',     label: 'Avis',           icon: '⭐' },
-  { id: 'parametres', label: 'Paramètres',   icon: '⚙️' },
+  { id: 'apercu',     label: 'Aperçu',      icon: '📊' },
+  { id: 'demandes',   label: 'Demandes',    icon: '📋', path: '/dashboard/demandes' },
+  { id: 'messages',   label: 'Messages',    icon: '💬' },
+  { id: 'profil',     label: 'Mon profil',  icon: '👤' },
+  { id: 'avis',       label: 'Avis',        icon: '⭐' },
+  { id: 'parametres', label: 'Paramètres',  icon: '⚙️' },
 ]
 
 function StatusBadge({ statut }) {
@@ -95,8 +89,6 @@ function StatusBadge({ statut }) {
 export default function Dashboard() {
   const [activeNav, setActiveNav] = useState('apercu')
 
-  // Récupère l'utilisateur réel si connecté, sinon utilise le fallback
-  // fictif pour pouvoir visualiser le dashboard en développement.
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null')
   const user = storedUser || FAKE_USER
   const role = user.role || 'particulier'
@@ -130,17 +122,40 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {NAV_ITEMS.map(item => (
-            <button
-              key={item.id}
-              onClick={() => setActiveNav(item.id)}
-              className={`${styles.navItem} ${activeNav === item.id ? styles.navItemActive : ''}`}
-              aria-current={activeNav === item.id ? 'page' : undefined}
-            >
-              <span className={styles.navIcon}>{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
+          {NAV_ITEMS.map(item => {
+            const isActive = activeNav === item.id
+            const className = `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
+
+            // Si l'item a un path → NavLink avec navigation réelle
+            if (item.path) {
+              return (
+                <NavLink
+                  key={item.id}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
+                  }
+                  onClick={() => setActiveNav(item.id)}
+                >
+                  <span className={styles.navIcon}>{item.icon}</span>
+                  {item.label}
+                </NavLink>
+              )
+            }
+
+            // Sinon → bouton simple (pas encore de page dédiée)
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveNav(item.id)}
+                className={className}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <span className={styles.navIcon}>{item.icon}</span>
+                {item.label}
+              </button>
+            )
+          })}
         </aside>
 
         {/* ── Contenu principal ── */}
@@ -165,7 +180,7 @@ export default function Dashboard() {
           <section className={styles.card} aria-labelledby="activite-title">
             <div className={styles.cardHeader}>
               <h2 id="activite-title" className={styles.cardTitle}>Activité récente</h2>
-              <NavLink to="/recherche" className={styles.cardLink}>Voir tout →</NavLink>
+              <NavLink to="/dashboard/demandes" className={styles.cardLink}>Voir tout →</NavLink>
             </div>
 
             {activites.length > 0 ? (
