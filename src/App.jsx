@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from'./components/ProtectedRoute';
 import ProDemandes from './pages/ProDemandes';
+import ProProfile from './pages/ProProfile';
 
 
 function App() {
