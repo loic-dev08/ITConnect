@@ -1,30 +1,32 @@
-import { BrowserRouter , Routes, Route} from 'react-router-dom';
-import Home from './pages/Home';
-import Search from './pages/Search';
-import ProProfile from './pages/ProProfil';
-import Register from './pages/Register';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import ProtectedRoute from'./components/ProtectedRoute';
-import ProDemandes from './pages/ProDemandes';
-import ProProfil from './pages/ProProfil';
-
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home        from './pages/Home'
+import Search      from './pages/Search'
+import ProProfil   from './pages/ProProfil'
+import Register    from './pages/Register'
+import Login       from './pages/Login'
+import Dashboard   from './pages/Dashboard'
+import ProDemandes from './pages/ProDemandes'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
-  return(
+  return (
     <BrowserRouter>
-    <Routes>
+      <Routes>
 
-      */ Pages publiques*/
-      <Route path='/'element={<Home/>}/>
-      <Route path='/recherche'element={<Search />} />
-      <Route path='/pro/:id'element={<ProProfil />} />
-      <Route path='/inscription'element={<Register />} />
-      <Route path='/connexion'element={<Login />} />
-      <Route element={<ProtectedRoute />} />
-      <Route path='/dashboard'element={<Dashboard />} />
-      <Route path="/dashboard/demandes" element={<ProDemandes />} />
-    </Routes>
+        {/* ── Pages publiques ── */}
+        <Route path="/"           element={<Home />} />
+        <Route path="/recherche"  element={<Search />} />
+        <Route path="/pro/:id"    element={<ProProfil />} />
+        <Route path="/inscription" element={<Register />} />
+        <Route path="/connexion"  element={<Login />} />
+
+        {/* ── Pages privées (nécessitent d'être connecté) ── */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard"           element={<Dashboard />} />
+          <Route path="/dashboard/demandes"  element={<ProDemandes />} />
+        </Route>
+
+      </Routes>
     </BrowserRouter>
   )
 }
