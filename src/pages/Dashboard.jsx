@@ -72,7 +72,7 @@ const NAV_ITEMS = [
   { id: 'apercu',     label: 'Aperçu',      icon: '📊' },
   { id: 'demandes',   label: 'Demandes',    icon: '📋', path: '/dashboard/demandes' },
   { id: 'messages',   label: 'Messages',    icon: '💬' },
-  { id: 'profil',     label: 'Mon profil',  icon: '👤' },
+  { id: 'profil',     label: 'Mon profil',  icon: '👤', path: '/dashboard/profil' },
   { id: 'avis',       label: 'Avis',        icon: '⭐' },
   { id: 'parametres', label: 'Paramètres',  icon: '⚙️' },
 ]

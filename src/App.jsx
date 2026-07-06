@@ -8,6 +8,7 @@ import Dashboard   from './pages/Dashboard'
 import ProDemandes from './pages/ProDemandes'
 import ProtectedRoute from './components/ProtectedRoute'
 import NotFound    from './pages/NotFound'
+import ProfilUtilisateur from './pages/ProfilUtilisateur'
 
 function App() {
   return (
@@ -25,6 +26,10 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard"           element={<Dashboard />} />
           <Route path="/dashboard/demandes"  element={<ProDemandes />} />
+
+          // Dans la zone protégée :
+
+          <Route path="/dashboard/profil"    element={<ProfilUtilisateur />} />
 
           //A la fin des routes, après toutes les autres :
           <Route path="*" element={<NotFound />} />
