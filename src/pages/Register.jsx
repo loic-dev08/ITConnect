@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import styles from '../css/Auth.module.css'
+import Register from './Register'
 
 // ── Règles de validation ──────────────────────────────────────
 function valider({ email, motDePasse }) {
