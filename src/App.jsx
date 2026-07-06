@@ -7,6 +7,7 @@ import Login       from './pages/Connexion'
 import Dashboard   from './pages/Dashboard'
 import ProDemandes from './pages/ProDemandes'
 import ProtectedRoute from './components/ProtectedRoute'
+import NotFound    from './pages/NotFound'
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard"           element={<Dashboard />} />
           <Route path="/dashboard/demandes"  element={<ProDemandes />} />
+
+          //A la fin des routes, après toutes les autres :
+          <Route path="*" element={<NotFound />} />
         </Route>
 
       </Routes>
