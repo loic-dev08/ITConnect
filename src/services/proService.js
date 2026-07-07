@@ -1,97 +1,65 @@
-import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 
-// ── useFetch ──────────────────────────────────────────────────
-// Hook générique pour les appels API GET avec Axios.
-// Gère automatiquement les états loading, data, error.
-//
-// Utilisation :
-//   const { data, loading, error, refetch } = useFetch('/api/professionnels')
-//
-// Avec options :
-//   const { data } = useFetch('/api/professionnels', {
-//     params: { specialite: 'réseau', ville: 'Melun' },
-//     skip: !isAuthenticated,  // ne pas appeler si non connecté
-//   })
-// ─────────────────────────────────────────────────────────────
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
-export function useFetch(url, options = {}) {
-  const { params = {}, skip = false, dependencies = [] } = options
+const api = axios.create({
+  baseURL: API_URL,
+  headers: { 'Content-Type': 'application/json' },
+})
 
-  const [data, setData]       = useState(null)
-  const [loading, setLoading] = useState(!skip)
-  const [error, setError]     = useState(null)
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
 
-  const fetchData = useCallback(async () => {
-    if (skip) return
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      const token = localStorage.getItem('token')
-      const response = await axios.get(url, {
-        params,
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      })
-      setData(response.data)
-    } catch (err) {
-      setError(err.response?.data?.message || 'Une erreur est survenue.')
-    } finally {
-      setLoading(false)
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      window.location.href = '/connexion'
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, skip, JSON.stringify(params), ...dependencies])
+    return Promise.reject(error)
+  }
+)
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
-
-  return { data, loading, error, refetch: fetchData }
-}
-
-// ── useMutation ───────────────────────────────────────────────
-// Hook pour les appels POST / PUT / DELETE (mutations).
-// Ne s'exécute pas automatiquement — à déclencher manuellement.
-//
-// Utilisation :
-//   const { mutate, loading, error, data } = useMutation('PUT', '/api/auth/me')
-//   await mutate({ prenom: 'Loic', nom: 'Dupont' })
-// ─────────────────────────────────────────────────────────────
-
-export function useMutation(method = 'POST', url) {
-  const [data, setData]       = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState(null)
-
-  const mutate = useCallback(async (body = {}) => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const token = localStorage.getItem('token')
-      const headers = {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      }
-
-      const response = await axios({
-        method: method.toLowerCase(),
-        url,
-        data: body,
-        headers,
-      })
-
-      setData(response.data)
-      return response.data
-    } catch (err) {
-      const message = err.response?.data?.message || 'Une erreur est survenue.'
-      setError(message)
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }, [method, url])
-
-  return { mutate, data, loading, error }
+export const proService = {
+  getProfessionnels: async (params = {}) => {
+    const response = await api.get('/api/professionnels', { params })
+    return response.data
+  },
+  getProfessionnelById: async (id) => {
+    const response = await api.get(`/api/professionnels/${id}`)
+    return response.data
+  },
+  updateProfilPro: async (data) => {
+    const response = await api.put('/api/professionnels/me', data)
+    return response.data
+  },
+  getDemandes: async () => {
+    const response = await api.get('/api/demandes')
+    return response.data
+  },
+  createDemande: async ({ professionnelId, objet, message }) => {
+    const response = await api.post('/api/demandes', { professionnelId, objet, message })
+    return response.data
+  },
+  updateStatutDemande: async (id, statut) => {
+    const response = await api.put(`/api/demandes/${id}/statut`, { statut })
+    return response.data
+  },
+  getDemandeById: async (id) => {
+    const response = await api.get(`/api/demandes/${id}`)
+    return response.data
+  },
+  getAvis: async (professionnelId) => {
+    const response = await api.get(`/api/professionnels/${professionnelId}/avis`)
+    return response.data
+  },
+  createAvis: async (professionnelId, { note, texte }) => {
+    const response = await api.post(`/api/professionnels/${professionnelId}/avis`, { note, texte })
+    return response.data
+  },
 }

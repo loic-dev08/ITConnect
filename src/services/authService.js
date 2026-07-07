@@ -1,97 +1,53 @@
-import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 
-// ── useFetch ──────────────────────────────────────────────────
-// Hook générique pour les appels API GET avec Axios.
-// Gère automatiquement les états loading, data, error.
-//
-// Utilisation :
-//   const { data, loading, error, refetch } = useFetch('/api/professionnels')
-//
-// Avec options :
-//   const { data } = useFetch('/api/professionnels', {
-//     params: { specialite: 'réseau', ville: 'Melun' },
-//     skip: !isAuthenticated,  // ne pas appeler si non connecté
-//   })
-// ─────────────────────────────────────────────────────────────
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
-export function useFetch(url, options = {}) {
-  const { params = {}, skip = false, dependencies = [] } = options
+const api = axios.create({
+  baseURL: API_URL,
+  headers: { 'Content-Type': 'application/json' },
+})
 
-  const [data, setData]       = useState(null)
-  const [loading, setLoading] = useState(!skip)
-  const [error, setError]     = useState(null)
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
 
-  const fetchData = useCallback(async () => {
-    if (skip) return
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      const token = localStorage.getItem('token')
-      const response = await axios.get(url, {
-        params,
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      })
-      setData(response.data)
-    } catch (err) {
-      setError(err.response?.data?.message || 'Une erreur est survenue.')
-    } finally {
-      setLoading(false)
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      window.location.href = '/connexion'
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, skip, JSON.stringify(params), ...dependencies])
+    return Promise.reject(error)
+  }
+)
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
-
-  return { data, loading, error, refetch: fetchData }
-}
-
-// ── useMutation ───────────────────────────────────────────────
-// Hook pour les appels POST / PUT / DELETE (mutations).
-// Ne s'exécute pas automatiquement — à déclencher manuellement.
-//
-// Utilisation :
-//   const { mutate, loading, error, data } = useMutation('PUT', '/api/auth/me')
-//   await mutate({ prenom: 'Loic', nom: 'Dupont' })
-// ─────────────────────────────────────────────────────────────
-
-export function useMutation(method = 'POST', url) {
-  const [data, setData]       = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState(null)
-
-  const mutate = useCallback(async (body = {}) => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const token = localStorage.getItem('token')
-      const headers = {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      }
-
-      const response = await axios({
-        method: method.toLowerCase(),
-        url,
-        data: body,
-        headers,
-      })
-
-      setData(response.data)
-      return response.data
-    } catch (err) {
-      const message = err.response?.data?.message || 'Une erreur est survenue.'
-      setError(message)
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }, [method, url])
-
-  return { mutate, data, loading, error }
+export const authService = {
+  login: async ({ email, motDePasse }) => {
+    const response = await api.post('/api/auth/connexion', { email, motDePasse })
+    return response.data
+  },
+  register: async ({ prenom, nom, email, motDePasse, role }) => {
+    const response = await api.post('/api/auth/inscription', { prenom, nom, email, motDePasse, role })
+    return response.data
+  },
+  getMe: async () => {
+    const response = await api.get('/api/auth/me')
+    return response.data
+  },
+  updateMe: async ({ prenom, nom, email, ville }) => {
+    const response = await api.put('/api/auth/me', { prenom, nom, email, ville })
+    return response.data
+  },
+  updatePassword: async ({ actuel, nouveau }) => {
+    const response = await api.put('/api/auth/mot-de-passe', { actuel, nouveau })
+    return response.data
+  },
+  deleteAccount: async () => {
+    const response = await api.delete('/api/auth/me')
+    return response.data
+  },
 }
