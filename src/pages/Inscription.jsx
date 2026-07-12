@@ -1,3 +1,4 @@
+import api from '../services/api'
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
@@ -89,43 +90,27 @@ export default function Inscription() {
     setErreurGlobal('')
 
     try {
-      // ── À remplacer par l'appel API réel ──
-      // const res = await axios.post('/api/auth/inscription', {
-      //   prenom: form.prenom,
-      //   nom: form.nom,
-      //   email: form.email,
-      //   motDePasse: form.motDePasse,
-      //   role: form.role,
-      // })
-      // const { token, user } = res.data
-      // localStorage.setItem('token', token)
-      // localStorage.setItem('user', JSON.stringify(user))
-      // navigate('/dashboard')
+  const res = await api.post('/auth/inscription', {
+    prenom: form.prenom,
+    nom: form.nom,
+    email: form.email,
+    motDePasse: form.motDePasse,
+    role: form.role,
+  })
+  const { token, user } = res.data
 
-      // Simulation d'une réponse API
-      await new Promise(r => setTimeout(r, 1500))
+  localStorage.setItem('token', token)
+  localStorage.setItem('user', JSON.stringify(user))
 
-      // Utilisateur fictif créé
-      const fakeUser = {
-        id: Date.now(),
-        prenom: form.prenom,
-        nom: form.nom,
-        email: form.email,
-        role: form.role,
-      }
-      localStorage.setItem('token', 'fake-jwt-token')
-      localStorage.setItem('user', JSON.stringify(fakeUser))
+  setSucces(true)
+  setTimeout(() => navigate('/dashboard'), 2000)
 
-      setSucces(true)
-      setTimeout(() => navigate('/dashboard'), 2000)
-
-    } catch (err) {
-      // err.response?.status === 409 → email déjà utilisé
-      // const message = err.response?.data?.message || 'Une erreur est survenue.'
-      setErreurGlobal('Cet email est déjà associé à un compte. Essayez de vous connecter.')
-    } finally {
-      setLoading(false)
-    }
+} catch (err) {
+  const message = err.response?.data?.message || 'Une erreur est survenue.'
+  setErreurGlobal(message)
+} finally {
+  setLoading(false)
+}
   }
 
   return (

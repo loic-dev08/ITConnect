@@ -1,3 +1,4 @@
+import api from '../services/api'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
@@ -53,41 +54,25 @@ export default function Connexion() {
     setLoading(true)
     setErreurGlobal('')
 
-    try {
-      // ── À remplacer par l'appel API réel ──
-      // const res = await axios.post('/api/auth/connexion', {
-      //   email: form.email,
-      //   motDePasse: form.motDePasse,
-      // })
-      // const { token, user } = res.data
-      // localStorage.setItem('token', token)
-      // localStorage.setItem('user', JSON.stringify(user))
-      // navigate('/dashboard')
+   try {
+  const res = await api.post('/auth/connexion', {
+    email: form.email,
+    motDePasse: form.motDePasse,
+  })
+  const { token, user } = res.data
 
-      // Simulation d'une réponse API (2 secondes)
-      await new Promise(r => setTimeout(r, 1500))
+  localStorage.setItem('token', token)
+  localStorage.setItem('user', JSON.stringify(user))
+  navigate('/dashboard')
 
-      // Utilisateur fictif pour visualiser le flux complet
-      const fakeUser = {
-        id: 1,
-        prenom: 'Camille',
-        nom: 'Dubois',
-        email: form.email,
-        role: 'professionnel',
-      }
-      localStorage.setItem('token', 'fake-jwt-token')
-      localStorage.setItem('user', JSON.stringify(fakeUser))
-      navigate('/dashboard')
-
-    } catch (err) {
-      // Gestion des erreurs API (401 = mauvais identifiants, etc.)
-      // const message = err.response?.data?.message || 'Une erreur est survenue.'
-      setErreurGlobal('Email ou mot de passe incorrect. Veuillez réessayer.')
-    } finally {
-      setLoading(false)
-    }
+} catch (err) {
+  const message = err.response?.data?.message || 'Une erreur est survenue.'
+  setErreurGlobal(message)
+} finally {
+  setLoading(false)
+}
   }
-
+  
   return (
     <div className={styles.page}>
       <Navbar />

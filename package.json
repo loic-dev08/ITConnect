@@ -1,6 +1,6 @@
 {
   "name": "ITConnect-frontend",
-  "description":"Frontend React pour ITConnect",
+  "description": "Frontend React pour ITConnect",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.18.1",
     "react": "^19.2.7",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.7",
