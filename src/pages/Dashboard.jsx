@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import api from '../services/api'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import styles from '../css/Dashboard.module.css'
@@ -88,12 +89,44 @@ function StatusBadge({ statut }) {
 
 export default function Dashboard() {
   const [activeNav, setActiveNav] = useState('apercu')
+  const [user, setUser]           = useState(null)
+  const [loading, setLoading]     = useState(true)
+  const navigate = useNavigate()
 
-  const storedUser = JSON.parse(localStorage.getItem('user') || 'null')
-  const user = storedUser || FAKE_USER
-  const role = user.role || 'particulier'
+  useEffect(() => {
+    async function chargerProfil() {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        navigate('/connexion')
+        return
+      }
 
-  const initiales = `${user.prenom?.[0] || ''}${user.nom?.[0] || ''}`
+      try {
+        const res = await api.get('/auth/me')
+        setUser(res.data.user)
+        localStorage.setItem('user', JSON.stringify(res.data.user))
+      } catch (err) {
+        // Token invalide ou expiré → déconnexion et retour à la page de connexion
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        navigate('/connexion')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    chargerProfil()
+  }, [navigate])
+
+  if (loading) {
+    return <div className={styles.page}>Chargement…</div>
+  }
+
+  if (!user) {
+    return null }
+
+ const role = user?.role || 'particulier'
+  const initiales = `${user?.prenom?.[0] || ''}${user?.nom?.[0] || ''}`
   const stats = STATS_BY_ROLE[role] || STATS_BY_ROLE.particulier
   const activites = ACTIVITY_BY_ROLE[role] || ACTIVITY_BY_ROLE.particulier
 
