@@ -6,22 +6,7 @@ import SearchBar from '../components/SearchBar'
 import api from '../services/api'
 import styles from '../css/Recherche.module.css'
 
-// ── Données fictives ──────────────────────────────────────────
-// À remplacer par : const { data } = await axios.get('/api/professionnels')
-const PROS = [
-  { id: 1,  initiales: 'LM', nom: 'Larry Max',          specialite: 'Réseau & Cybersécurité',    ville: 'Melun',       note: 5.0, avis: 24, dispo: true  },
-  { id: 2,  initiales: 'LP', nom: 'Lucie Perrin',        specialite: 'Administration Systèmes',   ville: 'Montereau',   note: 4.8, avis: 31, dispo: true  },
-  { id: 3,  initiales: 'AC', nom: 'Amélie Chevalier',    specialite: 'Développement React/Node',  ville: 'Sens',        note: 4.0, avis: 17, dispo: false },
-  { id: 4,  initiales: 'NV', nom: 'Nina Vallet',         specialite: 'UX Design & Intégration',  ville: 'Melun',       note: 4.9, avis: 19, dispo: true  },
-  { id: 5,  initiales: 'EC', nom: 'Éric Castel',         specialite: 'Data Science & IA',        ville: 'Auxerre',     note: 4.5, avis: 7,  dispo: true  },
-  { id: 6,  initiales: 'RB', nom: 'Romain Bernard',      specialite: 'Développement Mobile',     ville: 'Montpellier', note: 4.2, avis: 13, dispo: false },
-  { id: 7,  initiales: 'TM', nom: 'Thomas Mercier',      specialite: 'Réseau & Cybersécurité',   ville: 'Sens',        note: 4.7, avis: 22, dispo: true  },
-  { id: 8,  initiales: 'SB', nom: 'Sophie Blanchard',    specialite: 'Administration Systèmes',  ville: 'Auxerre',     note: 4.3, avis: 11, dispo: true  },
-  { id: 9,  initiales: 'PL', nom: 'Pierre Lefebvre',     specialite: 'Développement Web',        ville: 'Montereau',   note: 4.6, avis: 8,  dispo: false },
-  { id: 10, initiales: 'ML', nom: 'Marie Leclerc',       specialite: 'Support & Dépannage',      ville: 'Melun',       note: 4.1, avis: 35, dispo: true  },
-  { id: 11, initiales: 'JD', nom: 'Julien Dupont',       specialite: 'Cloud & DevOps',           ville: 'Paris',       note: 4.8, avis: 16, dispo: true  },
-  { id: 12, initiales: 'CR', nom: 'Charlotte Renard',    specialite: 'UX Design & Intégration',  ville: 'Sens',        note: 3.9, avis: 6,  dispo: false },
-]
+
 
 const SPECIALITES = [
   'Toutes les spécialités',
