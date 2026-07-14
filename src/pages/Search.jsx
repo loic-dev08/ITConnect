@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SearchBar from '../components/SearchBar'
+import api from '../services/api'
 import styles from '../css/Recherche.module.css'
 
 // ── Données fictives ──────────────────────────────────────────
