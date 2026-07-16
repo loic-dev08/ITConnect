@@ -5,7 +5,7 @@ import Footer from '../components/Footer'
 import api from '../services/api'
 import styles from '../css/ProProfil.module.css'
 
-// ── Composant étoiles ─────────────────────────────────────────
+// ── Composant étoiles (affichage) ──────────────────────────────
 function Stars({ note }) {
   return (
     <span aria-label={`Note : ${note} sur 5`}>
@@ -16,7 +16,26 @@ function Stars({ note }) {
   )
 }
 
-// ── Validation formulaire ─────────────────────────────────────
+// ── Composant étoiles (saisie) ──────────────────────────────────
+function StarsInput({ value, hover, onHover, onSelect }) {
+  return (
+    <div style={{ display: 'flex', gap: 4 }}>
+      {[1, 2, 3, 4, 5].map(i => (
+        <span
+          key={i}
+          onClick={() => onSelect(i)}
+          onMouseEnter={() => onHover(i)}
+          onMouseLeave={() => onHover(0)}
+          style={{ cursor: 'pointer', fontSize: 24, color: i <= (hover || value) ? '#F5B301' : '#DDD' }}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  )
+}
+
+// ── Validation formulaire de contact ───────────────────────────
 function validerContact({ objet, message }) {
   const erreurs = {}
   if (!objet.trim())   erreurs.objet   = 'Veuillez indiquer l\'objet de votre demande.'
@@ -25,19 +44,25 @@ function validerContact({ objet, message }) {
   return erreurs
 }
 
-// ── Page ProProfil ────────────────────────────────────────────
+// ── Page ProProfil ──────────────────────────────────────────────
 export default function ProProfil() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const [pro, setPro]                 = useState(null)
-  const [loadingPro, setLoadingPro]   = useState(true)
-  const [erreurPro, setErreurPro]     = useState(false)
+  const [pro, setPro]               = useState(null)
+  const [loadingPro, setLoadingPro] = useState(true)
+  const [erreurPro, setErreurPro]   = useState(false)
 
   const [form, setForm]       = useState({ objet: '', message: '' })
   const [erreurs, setErreurs] = useState({})
   const [loading, setLoading] = useState(false)
   const [succes, setSucces]   = useState(false)
+
+  const [avisForm, setAvisForm]       = useState({ note: 0, texte: '' })
+  const [avisErreurs, setAvisErreurs] = useState({})
+  const [avisLoading, setAvisLoading] = useState(false)
+  const [avisSucces, setAvisSucces]   = useState(false)
+  const [avisHover, setAvisHover]     = useState(0)
 
   const currentUser = JSON.parse(localStorage.getItem('user') || 'null')
 
@@ -99,6 +124,58 @@ export default function ProProfil() {
     }
   }
 
+  function handleAvisChange(e) {
+    const { name, value } = e.target
+    setAvisForm(prev => ({ ...prev, [name]: value }))
+    if (avisErreurs[name]) setAvisErreurs(prev => ({ ...prev, [name]: '' }))
+  }
+
+  async function handleAvisSubmit(e) {
+    e.preventDefault()
+
+    if (!currentUser) {
+      setAvisErreurs({ global: 'Vous devez être connecté pour laisser un avis.' })
+      return
+    }
+    if (!['particulier', 'entreprise'].includes(currentUser.role)) {
+      setAvisErreurs({ global: 'Seuls les particuliers et entreprises peuvent laisser un avis.' })
+      return
+    }
+
+    const erreurs = {}
+    if (!avisForm.note || avisForm.note < 1 || avisForm.note > 5) {
+      erreurs.note = 'Veuillez choisir une note entre 1 et 5.'
+    }
+    if (!avisForm.texte.trim()) {
+      erreurs.texte = 'Veuillez rédiger votre avis.'
+    } else if (avisForm.texte.trim().length < 10) {
+      erreurs.texte = 'Votre avis doit contenir au moins 10 caractères.'
+    }
+    if (Object.keys(erreurs).length > 0) {
+      setAvisErreurs(erreurs)
+      return
+    }
+
+    setAvisLoading(true)
+    setAvisErreurs({})
+    try {
+      await api.post(`/professionnels/${pro.id}/avis`, {
+        note: Number(avisForm.note),
+        texte: avisForm.texte,
+      })
+      setAvisSucces(true)
+      setAvisForm({ note: 0, texte: '' })
+
+      const res = await api.get(`/professionnels/${id}`)
+      setPro(res.data.professionnel)
+    } catch (err) {
+      const message = err.response?.data?.message || 'Une erreur est survenue.'
+      setAvisErreurs({ global: message })
+    } finally {
+      setAvisLoading(false)
+    }
+  }
+
   if (loadingPro) {
     return (
       <div className={styles.page}>
@@ -130,12 +207,12 @@ export default function ProProfil() {
     )
   }
 
-  const nom          = `${pro.user?.prenom || ''} ${pro.user?.nom || ''}`.trim()
-  const initiales     = `${pro.user?.prenom?.[0] || ''}${pro.user?.nom?.[0] || ''}`
-  const note           = pro.note_moyenne ? parseFloat(pro.note_moyenne) : 0
-  const avisCount      = pro.nombre_avis || 0
-  const competences    = Array.isArray(pro.competences) ? pro.competences : []
-  const avisClients    = (pro.avis || []).map(a => ({
+  const nom       = `${pro.user?.prenom || ''} ${pro.user?.nom || ''}`.trim()
+  const initiales = `${pro.user?.prenom?.[0] || ''}${pro.user?.nom?.[0] || ''}`
+  const note      = pro.note_moyenne ? parseFloat(pro.note_moyenne) : 0
+  const avisCount = pro.nombre_avis || 0
+  const competences = Array.isArray(pro.competences) ? pro.competences : []
+  const avisClients = (pro.avis || []).map(a => ({
     id: a.id,
     initiales: `${a.client?.prenom?.[0] || ''}${a.client?.nom?.[0] || ''}`,
     nom: `${a.client?.prenom || ''} ${a.client?.nom || ''}`.trim(),
@@ -275,6 +352,56 @@ export default function ProProfil() {
                 <p style={{ color: '#9A8FBD', fontSize: 13 }}>Aucun avis pour le moment.</p>
               )}
             </section>
+
+            {currentUser && ['particulier', 'entreprise'].includes(currentUser.role) && (
+              <section className={styles.card} aria-labelledby="avis-form-title">
+                <h2 id="avis-form-title" className={styles.cardTitle}>Laisser un avis</h2>
+
+                {avisSucces ? (
+                  <div className={styles.successBanner}>
+                    ✅ Merci, votre avis a bien été publié !
+                  </div>
+                ) : (
+                  <form onSubmit={handleAvisSubmit} className={styles.form} noValidate>
+                    <div className={styles.fieldGroup}>
+                      <label className={styles.label}>Votre note</label>
+                      <StarsInput
+                        value={avisForm.note}
+                        hover={avisHover}
+                        onHover={setAvisHover}
+                        onSelect={n => {
+                          setAvisForm(prev => ({ ...prev, note: n }))
+                          if (avisErreurs.note) setAvisErreurs(prev => ({ ...prev, note: '' }))
+                        }}
+                      />
+                      {avisErreurs.note && <p className={styles.errorMsg} role="alert">⚠ {avisErreurs.note}</p>}
+                    </div>
+
+                    <div className={styles.fieldGroup}>
+                      <label htmlFor="avis-texte" className={styles.label}>Votre commentaire</label>
+                      <textarea
+                        id="avis-texte"
+                        name="texte"
+                        value={avisForm.texte}
+                        onChange={handleAvisChange}
+                        placeholder="Décrivez votre expérience avec ce professionnel…"
+                        className={`${styles.textarea} ${avisErreurs.texte ? styles.inputError : ''}`}
+                      />
+                      {avisErreurs.texte && <p className={styles.errorMsg} role="alert">⚠ {avisErreurs.texte}</p>}
+                    </div>
+
+                    {avisErreurs.global && (
+                      <p className={styles.errorMsg} role="alert">⚠ {avisErreurs.global}</p>
+                    )}
+
+                    <button type="submit" className={styles.submitBtn} disabled={avisLoading}>
+                      {avisLoading && <span className={styles.spinner} aria-hidden="true" />}
+                      {avisLoading ? 'Publication…' : '⭐ Publier mon avis'}
+                    </button>
+                  </form>
+                )}
+              </section>
+            )}
 
             <section className={styles.card} id="contact-form" aria-labelledby="contact-title">
               <h2 id="contact-title" className={styles.cardTitle}>

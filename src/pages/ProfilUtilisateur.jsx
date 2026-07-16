@@ -1,18 +1,11 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import api from'../services/api'
 import styles from '../css/ProfilUtilisateur.module.css'
 
 // ── Données fictives ──────────────────────────────────────────
-// À remplacer par : const { data: user } = await axios.get('/api/auth/me')
-const FAKE_USER = {
-  prenom: 'Camille',
-  nom: 'Dubois',
-  email: 'camille.dubois@email.com',
-  ville: 'Melun',
-  role: 'professionnel',
-  membre: 'Janvier 2025',
-}
+
 
 const ROLE_LABELS = {
   particulier:  'Particulier',
@@ -106,27 +99,23 @@ export default function ProfilUtilisateur() {
   }
 
   async function handleInfosSubmit(e) {
-    e.preventDefault()
-    const erreurs = validerInfos(infos)
-    if (Object.keys(erreurs).length > 0) { setErreurInfos(erreurs); return }
+  e.preventDefault()
+  const erreurs = validerInfos(infos)
+  if (Object.keys(erreurs).length > 0) { setErreurInfos(erreurs); return }
 
-    setLoadingInfos(true)
-    setErreurInfosGlobal('')
-    try {
-      // À remplacer par :
-      // await axios.put('/api/auth/me', infos)
-      await new Promise(r => setTimeout(r, 1200))
-
-      // Met à jour le localStorage avec les nouvelles infos
-      const updatedUser = { ...userData, ...infos }
-      localStorage.setItem('user', JSON.stringify(updatedUser))
-      setSuccesInfos(true)
-    } catch {
-      setErreurInfosGlobal('Une erreur est survenue. Veuillez réessayer.')
-    } finally {
-      setLoadingInfos(false)
-    }
+  setLoadingInfos(true)
+  setErreurInfosGlobal('')
+  try {
+    const res = await api.put('/auth/me', infos)
+    localStorage.setItem('user', JSON.stringify(res.data.user))
+    setSuccesInfos(true)
+  } catch (err) {
+    const message = err.response?.data?.message || 'Une erreur est survenue. Veuillez réessayer.'
+    setErreurInfosGlobal(message)
+  } finally {
+    setLoadingInfos(false)
   }
+}
 
   // ── Handlers Mot de passe ──
   function handleMdpChange(e) {
@@ -137,31 +126,45 @@ export default function ProfilUtilisateur() {
     if (erreurMdpGlobal) setErreurMdpGlobal('')
   }
 
-  async function handleMdpSubmit(e) {
-    e.preventDefault()
-    const erreurs = validerMotDePasse(mdp)
-    if (Object.keys(erreurs).length > 0) { setErreursMdp(erreurs); return }
+ async function handleMdpSubmit(e) {
+  e.preventDefault()
+  const erreurs = validerMotDePasse(mdp)
+  if (Object.keys(erreurs).length > 0) { setErreursMdp(erreurs); return }
 
-    setLoadingMdp(true)
-    setErreurMdpGlobal('')
-    try {
-      // À remplacer par :
-      // await axios.put('/api/auth/mot-de-passe', {
-      //   actuel: mdp.actuel,
-      //   nouveau: mdp.nouveau,
-      // })
-      await new Promise(r => setTimeout(r, 1200))
-      setSuccesMdp(true)
-      setMdp({ actuel: '', nouveau: '', confirmation: '' })
-    } catch {
-      // err.response?.status === 401 → mot de passe actuel incorrect
-      setErreurMdpGlobal('Mot de passe actuel incorrect. Veuillez réessayer.')
-    } finally {
-      setLoadingMdp(false)
-    }
+  setLoadingMdp(true)
+  setErreurMdpGlobal('')
+  try {
+    await api.put('/auth/mot-de-passe', {
+      actuel: mdp.actuel,
+      nouveau: mdp.nouveau,
+    })
+    setSuccesMdp(true)
+    setMdp({ actuel: '', nouveau: '', confirmation: '' })
+  } catch (err) {
+    const message = err.response?.data?.message || 'Une erreur est survenue. Veuillez réessayer.'
+    setErreurMdpGlobal(message)
+  } finally {
+    setLoadingMdp(false)
   }
+}
 
   const initiales = `${infos.prenom?.[0] || ''}${infos.nom?.[0] || ''}`
+
+  async function handleDeleteAccount() {
+  const confirme = window.confirm(
+    'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est définitive et irréversible.'
+  )
+  if (!confirme) return
+
+  try {
+    await api.delete('/auth/me')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    window.location.href = '/'
+  } catch (err) {
+    alert(err.response?.data?.message || 'Impossible de supprimer le compte. Réessayez plus tard.')
+  }
+}
 
   return (
     <div className={styles.page}>
@@ -442,11 +445,12 @@ export default function ProfilUtilisateur() {
                 La suppression de votre compte est définitive. Toutes vos données seront effacées et ne pourront pas être récupérées.
               </p>
               <button
-                className={styles.btnDanger}
-                onClick={() => alert('Fonctionnalité à brancher sur l\'API — DELETE /api/auth/me')}
-              >
-                Supprimer mon compte
-              </button>
+                      className={styles.btnDanger}
+                       onClick={handleDeleteAccount}
+                                                    >
+                       Supprimer mon compte
+</button>
+              
             </div>
 
           </main>
