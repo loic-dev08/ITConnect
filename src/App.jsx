@@ -9,6 +9,7 @@ import ProDemandes       from './pages/ProDemandes'
 import ProfilUtilisateur from './pages/ProfilUtilisateur'
 import ProtectedRoute    from './components/ProtectedRoute'
 import NotFound          from './pages/NotFound'
+import MesDemandes from './pages/MesDemandes'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard"          element={<Dashboard />} />
           <Route path="/dashboard/demandes" element={<ProDemandes />} />
+          <Route path="/dashboard/mes-demandes" element={<MesDemandes />} />
           <Route path="/dashboard/profil"   element={<ProfilUtilisateur />} />
         </Route>
 

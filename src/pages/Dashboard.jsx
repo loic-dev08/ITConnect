@@ -128,10 +128,11 @@ export default function Dashboard() {
   if (!user) {
     return null }
 
- const role = user?.role || 'particulier'
+const role = user?.role || 'particulier'
   const initiales = `${user?.prenom?.[0] || ''}${user?.nom?.[0] || ''}`
   const stats = STATS_BY_ROLE[role] || STATS_BY_ROLE.particulier
   const activites = ACTIVITY_BY_ROLE[role] || ACTIVITY_BY_ROLE.particulier
+  const navItems = getNavItems(role)
 
   return (
     <div className={styles.page}>
