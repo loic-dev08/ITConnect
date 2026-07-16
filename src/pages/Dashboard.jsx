@@ -69,14 +69,17 @@ const ACTIVITY_BY_ROLE = {
   ],
 }
 
-const NAV_ITEMS = [
-  { id: 'apercu',     label: 'Aperçu',      icon: '📊' },
-  { id: 'demandes',   label: 'Demandes',    icon: '📋', path: '/dashboard/demandes' },
-  { id: 'messages',   label: 'Messages',    icon: '💬' },
-  { id: 'profil',     label: 'Mon profil',  icon: '👤', path: '/dashboard/profil' },
-  { id: 'avis',       label: 'Avis',        icon: '⭐' },
-  { id: 'parametres', label: 'Paramètres',  icon: '⚙️' },
-]
+function getNavItems(role) {
+  const demandesPath = role === 'professionnel' ? '/dashboard/demandes' : '/dashboard/mes-demandes'
+  return [
+    { id: 'apercu',     label: 'Aperçu',      icon: '📊' },
+    { id: 'demandes',   label: role === 'professionnel' ? 'Demandes reçues' : 'Mes demandes', icon: '📋', path: demandesPath },
+    { id: 'messages',   label: 'Messages',    icon: '💬' },
+    { id: 'profil',     label: 'Mon profil',  icon: '👤', path: '/dashboard/profil' },
+    { id: 'avis',       label: 'Avis',        icon: '⭐' },
+    { id: 'parametres', label: 'Paramètres',  icon: '⚙️' },
+  ]
+}
 
 function StatusBadge({ statut }) {
   const map = {
@@ -155,7 +158,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {NAV_ITEMS.map(item => {
+          {navItems.map(item => {
             const isActive = activeNav === item.id
             const className = `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
 
