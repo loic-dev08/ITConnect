@@ -10,6 +10,7 @@ import ProfilUtilisateur from './pages/ProfilUtilisateur'
 import ProtectedRoute    from './components/ProtectedRoute'
 import NotFound          from './pages/NotFound'
 import MesDemandes from './pages/MesDemandes'
+import Entreprises from './pages/Entreprises'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/pro/:id"     element={<ProProfil />} />
         <Route path="/inscription" element={<Register />} />
         <Route path="/connexion"   element={<Login />} />
+        <Route path="/entreprises" element={<Entreprises />} />
 
         {/* ── Pages privées (nécessitent d'être connecté) ── */}
         <Route element={<ProtectedRoute />}>

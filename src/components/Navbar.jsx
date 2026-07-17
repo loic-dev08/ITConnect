@@ -46,13 +46,14 @@ export default function Navbar() {
         </NavLink>
 
         {/* ── Liens desktop ── */}
-        <ul className={styles.links} role="list">
-          <li><NavLink to="/recherche" className={linkClass}>Rechercher</NavLink></li>
-          <li><NavLink to="/pro/1"     className={linkClass}>Professionnels</NavLink></li>
-          {user && (
-            <li><NavLink to="/dashboard" className={linkClass}>Mon espace</NavLink></li>
-          )}
-        </ul>
+       <ul className={styles.links} role="list">
+      <li><NavLink to="/recherche"   className={linkClass}>Rechercher</NavLink></li>
+      <li><NavLink to="/recherche"   className={linkClass}>Professionnels</NavLink></li>
+      <li><NavLink to="/entreprises" className={linkClass}>Entreprises</NavLink></li>
+  {user && (
+    <li><NavLink to="/dashboard" className={linkClass}>Mon espace</NavLink></li>
+  )}
+</ul>
 
         {/* ── Actions desktop ── */}
         <div className={styles.actions}>
@@ -96,11 +97,17 @@ export default function Navbar() {
                 🔍 Rechercher
               </NavLink>
             </li>
-            <li>
-              <NavLink to="/pro/1" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-                💻 Professionnels
-              </NavLink>
+            
+              <li>
+            <NavLink to="/recherche" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+             💻 Professionnels
+            </NavLink>
             </li>
+            <li>
+           <NavLink to="/entreprises" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+            🏢 Entreprises
+          </NavLink>
+          </li>
             {user && (
               <li>
                 <NavLink to="/dashboard" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
