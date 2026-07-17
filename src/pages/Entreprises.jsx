@@ -70,22 +70,43 @@ export default function Entreprises() {
           <div className={styles.grid}>
             {entreprises.map(e => (
               <article
-                key={e.id}
-                className={styles.proCard}
-                onClick={() => navigate(`/entreprise/${e.id}`)}
-                role="button"
-                tabIndex={0}
-                aria-label={`Voir la fiche de ${e.prenom} ${e.nom}`}
-                onKeyDown={ev => ev.key === 'Enter' && navigate(`/entreprise/${e.id}`)}
-              >
-                <div className={styles.proCardTop}>
-                  <div className={styles.avatar}>{e.prenom?.[0] || '🏢'}</div>
-                </div>
-                <div>
-                  <h2 className={styles.proName}>{e.prenom} {e.nom}</h2>
-                  <p className={styles.proVille}>📍 {e.ville || 'Ville non renseignée'}</p>
-                </div>
-              </article>
+  key={e.id}
+  className={styles.proCard}
+  onClick={() => navigate(`/entreprise/${e.id}`)}
+  role="button"
+  tabIndex={0}
+  aria-label={`Voir la fiche de ${e.prenom} ${e.nom}`}
+  onKeyDown={ev => ev.key === 'Enter' && navigate(`/entreprise/${e.id}`)}
+>
+  <div className={styles.proCardTop}>
+    <div className={styles.avatar}>{e.prenom?.[0] || '🏢'}</div>
+    <span className={`${styles.dispoBadge} ${styles.dispoOn}`}>
+      🏢 Entreprise
+    </span>
+  </div>
+
+  <div>
+    <h2 className={styles.proName}>{e.prenom} {e.nom}</h2>
+    <p className={styles.proSpec}>Entreprise partenaire</p>
+    <p className={styles.proVille}>📍 {e.ville || 'Ville non renseignée'}</p>
+  </div>
+
+  <div className={styles.proFooter}>
+    <span className={styles.proNote}>
+      {e.nombre_demandes} demande{e.nombre_demandes !== 1 ? 's' : ''}
+    </span>
+    <span className={styles.proAvis}>
+      {e.nombre_avis} avis laissé{e.nombre_avis !== 1 ? 's' : ''}
+    </span>
+  </div>
+
+  <button
+    className={styles.contactBtn}
+    onClick={ev => { ev.stopPropagation(); navigate(`/entreprise/${e.id}`) }}
+  >
+    Voir la fiche
+  </button>
+</article>
             ))}
           </div>
         )}
