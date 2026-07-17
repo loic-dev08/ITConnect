@@ -11,6 +11,7 @@ import ProtectedRoute    from './components/ProtectedRoute'
 import NotFound          from './pages/NotFound'
 import MesDemandes from './pages/MesDemandes'
 import Entreprises from './pages/Entreprises'
+import EntrepriseProfil from './pages/EntrepriseProfil'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/inscription" element={<Register />} />
         <Route path="/connexion"   element={<Login />} />
         <Route path="/entreprises" element={<Entreprises />} />
+        <Route path="/entreprise/:id" element={<EntrepriseProfil />} />
 
         {/* ── Pages privées (nécessitent d'être connecté) ── */}
         <Route element={<ProtectedRoute />}>

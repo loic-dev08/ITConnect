@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import api from '../services/api'
 import styles from '../css/Recherche.module.css'
 
 export default function Entreprises() {
+  const navigate = useNavigate()
   const [entreprises, setEntreprises] = useState([])
   const [loading, setLoading]         = useState(true)
   const [erreur, setErreur]           = useState('')
@@ -67,7 +69,15 @@ export default function Entreprises() {
         ) : (
           <div className={styles.grid}>
             {entreprises.map(e => (
-              <article key={e.id} className={styles.proCard}>
+              <article
+                key={e.id}
+                className={styles.proCard}
+                onClick={() => navigate(`/entreprise/${e.id}`)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Voir la fiche de ${e.prenom} ${e.nom}`}
+                onKeyDown={ev => ev.key === 'Enter' && navigate(`/entreprise/${e.id}`)}
+              >
                 <div className={styles.proCardTop}>
                   <div className={styles.avatar}>{e.prenom?.[0] || '🏢'}</div>
                 </div>
