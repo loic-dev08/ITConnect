@@ -1,20 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import ProCard from '../components/ProCard'
 import StarRating from '../components/StarRating'
+import api from '../services/api'
 import styles from '../css/Home.module.css'
-
-// --- Données fictives (à remplacer par appels API) ---
-const PROS_VEDETTE = [
-  { id: 1, nom: 'Larry Max',    specialite: 'Expert réseau & cybersécurité', ville: 'Melun',      note: 5,   avis: 24, initiales: 'LM', dispo: true  },
-  { id: 2, nom: 'Lucie Perrin',    specialite: 'Administratrice systèmes',       ville: 'Montereau', note: 4.8, avis: 31, initiales: 'LP', dispo: true  },
-  { id: 3, nom: 'Amélie Chevalier',specialite: 'Développeuse React / Node.js',   ville: 'Sens',      note: 4,   avis: 17, initiales: 'AC', dispo: false },
-  { id: 4, nom: 'Nina Vallet',     specialite: 'UX Designer & Intégratrice',     ville: 'Melun',     note: 4.9, avis: 19, initiales: 'NV', dispo: true  },
-  { id: 5, nom: 'Éric Castel',   specialite: 'Data Scientist & IA',            ville: 'Auxerre',   note: 4.5, avis: 7,  initiales: 'EC', dispo: true  },
-  { id: 6, nom: 'Romain Bernard',  specialite: 'Développeur mobile React Native',ville: 'Montpellier', note: 4.2, avis: 13, initiales: 'RB', dispo: false },
-]
 
 const TEMOIGNAGES = [
   { id: 1, auteur: 'Claire Girard',    role: 'Particulier',  ville: 'Sens', note: 5, texte: 'Larry a configuré mon réseau en moins d\'une heure. Service impeccable, je recommande vivement !', initiales: 'CG' },
@@ -75,7 +66,20 @@ function Stars({ note }) {
 export default function Home() {
   const [specialite, setSpecialite] = useState('')
   const [ville, setVille]           = useState('')
+  const [prosVedette, setProsVedette] = useState([])
   const navigate = useNavigate()
+
+  useEffect(() => {
+    async function chargerProsVedette() {
+      try {
+        const res = await api.get('/professionnels', { params: { limit: 6 } })
+        setProsVedette(res.data.professionnels)
+      } catch (err) {
+        setProsVedette([])
+      }
+    }
+    chargerProsVedette()
+  }, [])
 
   function handleSearch(e) {
     e.preventDefault()
@@ -219,31 +223,36 @@ export default function Home() {
           <h2 id="pros-title" className={styles.h2}>Professionnels en vedette</h2>
           <p className={styles.h2Sub}>Des experts vérifiés dans votre région</p>
           <div className={styles.prosGrid}>
-            {PROS_VEDETTE.map(pro => (
-              <article
-                key={pro.id}
-                className={styles.proCard}
-                onClick={() => navigate(`/pro/${pro.id}`)}
-                role="button"
-                tabIndex={0}
-                aria-label={`Voir le profil de ${pro.nom}`}
-                onKeyDown={e => e.key === 'Enter' && navigate(`/pro/${pro.id}`)}
-              >
-                <div className={styles.proCardTop}>
-                  <div className={styles.proAvatar}>{pro.initiales}</div>
-                  <span className={`${styles.dispoBadge} ${pro.dispo ? styles.on : styles.off}`}>
-                    {pro.dispo ? '● Disponible' : '○ Occupé'}
-                  </span>
-                </div>
-                <h3 className={styles.proName}>{pro.nom}</h3>
-                <p className={styles.proSpec}>{pro.specialite}</p>
-                <p className={styles.proVille}>📍 {pro.ville}</p>
-                <div className={styles.proFooter}>
-                  <Stars note={pro.note} />
-                  <span className={styles.proNote}>{pro.note}/5 · {pro.avis} avis</span>
-                </div>
-              </article>
-            ))}
+            {prosVedette.map(pro => {
+              const nom = `${pro.user?.prenom || ''} ${pro.user?.nom || ''}`.trim()
+              const initiales = `${pro.user?.prenom?.[0] || ''}${pro.user?.nom?.[0] || ''}`
+              const note = pro.note_moyenne ? parseFloat(pro.note_moyenne) : 0
+              return (
+                <article
+                  key={pro.id}
+                  className={styles.proCard}
+                  onClick={() => navigate(`/pro/${pro.id}`)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Voir le profil de ${nom}`}
+                  onKeyDown={e => e.key === 'Enter' && navigate(`/pro/${pro.id}`)}
+                >
+                  <div className={styles.proCardTop}>
+                    <div className={styles.proAvatar}>{initiales}</div>
+                    <span className={`${styles.dispoBadge} ${pro.disponible ? styles.on : styles.off}`}>
+                      {pro.disponible ? '● Disponible' : '○ Occupé'}
+                    </span>
+                  </div>
+                  <h3 className={styles.proName}>{nom}</h3>
+                  <p className={styles.proSpec}>{pro.specialite}</p>
+                  <p className={styles.proVille}>📍 {pro.ville}</p>
+                  <div className={styles.proFooter}>
+                    <Stars note={note} />
+                    <span className={styles.proNote}>{note}/5 · {pro.nombre_avis || 0} avis</span>
+                  </div>
+                </article>
+              )
+            })}
           </div>
           <div className={styles.centre}>
             <button onClick={() => navigate('/recherche')} className={styles.ctaPrimary}>
