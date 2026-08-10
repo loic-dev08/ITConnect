@@ -1,10 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import api from'../services/api'
+import api from '../services/api'
 import styles from '../css/ProfilUtilisateur.module.css'
-
-// ── Données fictives ──────────────────────────────────────────
 
 
 const ROLE_LABELS = {
@@ -51,16 +50,27 @@ function validerMotDePasse({ actuel, nouveau, confirmation }) {
 
 // ── Composant ─────────────────────────────────────────────────
 export default function ProfilUtilisateur() {
-  // Récupère l'utilisateur réel si connecté, sinon utilise le fallback fictif
+  const navigate = useNavigate()
+
+  // Récupère l'utilisateur réel si connecté ; redirige sinon (pas de fallback fictif)
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null')
-  const userData = storedUser || FAKE_USER
+
+  useEffect(() => {
+    if (!storedUser) {
+      navigate('/connexion')
+    }
+  }, [storedUser, navigate])
+
+  if (!storedUser) {
+    return null
+  }
 
   // ── État section Infos personnelles ──
   const [infos, setInfos] = useState({
-    prenom: userData.prenom || '',
-    nom:    userData.nom    || '',
-    email:  userData.email  || '',
-    ville:  userData.ville  || '',
+    prenom: storedUser?.prenom || '',
+    nom:    storedUser?.nom    || '',
+    email:  storedUser?.email  || '',
+    ville:  storedUser?.ville  || '',
   })
   const [erreursInfos, setErreurInfos]     = useState({})
   const [loadingInfos, setLoadingInfos]   = useState(false)
@@ -88,10 +98,10 @@ export default function ProfilUtilisateur() {
 
   function resetInfos() {
     setInfos({
-      prenom: userData.prenom || '',
-      nom:    userData.nom    || '',
-      email:  userData.email  || '',
-      ville:  userData.ville  || '',
+      prenom: storedUser?.prenom || '',
+      nom:    storedUser?.nom    || '',
+      email:  storedUser?.email  || '',
+      ville:  storedUser?.ville  || '',
     })
     setErreurInfos({})
     setSuccesInfos(false)
@@ -187,7 +197,7 @@ export default function ProfilUtilisateur() {
               <div>
                 <p className={styles.summaryName}>{infos.prenom} {infos.nom}</p>
                 <p className={styles.summaryEmail}>{infos.email}</p>
-                <span className={styles.roleBadge}>{ROLE_LABELS[userData.role] || 'Utilisateur'}</span>
+                <span className={styles.roleBadge}>{ROLE_LABELS[storedUser?.role] || 'Utilisateur'}</span>
               </div>
               <ul className={styles.summaryMeta}>
                 <li className={styles.summaryMetaItem}>
@@ -196,7 +206,7 @@ export default function ProfilUtilisateur() {
                 </li>
                 <li className={styles.summaryMetaItem}>
                   <span className={styles.summaryMetaIcon}>📅</span>
-                  Membre depuis {userData.membre || '2025'}
+                  Membre depuis {storedUser?.membre || '2025'}
                 </li>
               </ul>
             </div>
@@ -309,7 +319,7 @@ export default function ProfilUtilisateur() {
                     <span className={styles.inputIcon} aria-hidden="true">🏷️</span>
                     <input
                       type="text"
-                      value={ROLE_LABELS[userData.role] || 'Utilisateur'}
+                      value={ROLE_LABELS[storedUser?.role] || 'Utilisateur'}
                       className={`${styles.input} ${styles.inputDisabled}`}
                       disabled
                       aria-label="Rôle non modifiable"
