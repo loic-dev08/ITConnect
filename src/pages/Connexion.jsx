@@ -17,8 +17,8 @@ function valider({ email, motDePasse }) {
 
   if (!motDePasse) {
     erreurs.motDePasse = 'Le mot de passe est obligatoire.'
-  } else if (motDePasse.length < 6) {
-    erreurs.motDePasse = 'Le mot de passe doit contenir au moins 6 caractères.'
+  } else if (motDePasse.length < 8) {
+    erreurs.motDePasse = 'Le mot de passe doit contenir au moins 8 caractères.'
   }
 
   return erreurs
